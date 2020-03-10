@@ -72,7 +72,7 @@ $(function() {
     let onNewMessageReceived = function(event) {
 
         // as noted in the documentation, RAINBOW_ONNEWIMMESSAGERECEIVED carries three parameters: Message, Conversation and CC. Let's retrieve them:
-    
+
         let message = event.detail.message;
         let conversation = event.detail.conversation;   // refer to api "conversation"-web-sdk
 
@@ -91,11 +91,11 @@ $(function() {
 
 
     }
-    
+
     // add event listener
     document.addEventListener(rainbowSDK.im.RAINBOW_ONNEWIMMESSAGERECEIVED, onNewMessageReceived)
 
-    
+
     const messageContainer = document.getElementById('message-container')
     const messageForm = document.getElementById('send-container')
     const messageInput = document.getElementById('message-input')
@@ -111,14 +111,14 @@ $(function() {
 
         if (sender == 'agent'){
             console.log('sender is agent');
-            $('.message-container').append('<li tabindex="1"><img class="agenthead" src="./user_head.png"><span class="agent">'+message+'</span></li><br></br>');
+            $('.message-container').append('<li tabindex="1"><img class="agenthead" src="../img/user_head.png"><span class="agent">'+message+'</span></li><br></br>');
         }else if (sender == 'user'){
             console.log('sender is user' );
-            $('.message-container').append('<li tabindex="1"><img class="userhead" src="./user_head.png"><span class="user">'+message+'</span></li><br></br>');
-        } 
+            $('.message-container').append('<li tabindex="1"><img class="userhead" src="../img/user_head.png"><span class="user">'+message+'</span></li><br></br>');
+        }
         $('.menu .message-container').scrollTop(1000000000);
-        
-    } 
+
+    }
 
 
 
@@ -130,16 +130,16 @@ $(function() {
     var onWebRTCCallChanged = function onWebRTCCallChanged(event) {
         /* Listen to WebRTC call state change */
         let call = event.detail;
-    
+
         if (call.status.value === "incommingCall") {
             console.log('new incoming call');
-    
+
             if (call.remoteMedia === 3) {
                 console.log('it is video call');
                 // The incoming call is of type audio + video
                 var mycall = rainbowSDK.webRTC.answerInVideo(call);
                 console.log(mycall);
-    
+
                 var localv = rainbowSDK.webRTC.showLocalVideo();
                 var remotev = rainbowSDK.webRTC.showRemoteVideo(call);
                 console.log('local video is '+localv);
@@ -155,7 +155,7 @@ $(function() {
             }
         }
     };
-    
+
     /* Subscribe to WebRTC call change */
     document.addEventListener(rainbowSDK.webRTC.RAINBOW_ONWEBRTCCALLSTATECHANGED, onWebRTCCallChanged)
 

@@ -4,7 +4,7 @@
   "description": "rainbow web sdk",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "author": "",
   "license": "ISC",
@@ -14,6 +14,10 @@
     "rainbow-web-sdk": "^1.67.0"
   },
   "devDependencies": {
-    "http-server": "^0.12.1"
+    "chromedriver": "^80.0.1",
+    "geckodriver": "^1.19.1",
+    "http-server": "^0.12.1",
+    "jest": "^25.1.0",
+    "selenium-webdriver": "^4.0.0-alpha.7"
   }
 }
