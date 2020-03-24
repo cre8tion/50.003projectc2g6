@@ -6,6 +6,21 @@ html,body {
     background-color: #f2f2f2;
 }
 
+
+
+/* #minivideo {
+    width: 500px;
+    height: 500px;
+    border: 1px solid black;
+}
+
+#largevideo {
+    width: 500px;
+    height: 500px;
+    border: 1px solid black;
+} */
+
+
 .topnav {
     background-color: #202020;
     width: 100%;
@@ -123,6 +138,9 @@ html,body {
     font-variant: small-caps;
 }
 
+
+
+
 /* CSS for agent msg bubble */
 .message-container li img.agenthead{
 	float: left;
@@ -141,7 +159,6 @@ html,body {
     overflow: hidden;
     text-overflow: ellipsis;
 
-
 }
 
 
@@ -159,7 +176,7 @@ html,body {
 
 .message-container li .user{
 	float: right;
-	background-color: rgb(255, 255, 255);
+	background-color: rgb(25, 255, 255);
     border: 1px solid #f5f5f5;
     padding: 4px 8px;
     border-radius: 5px;
@@ -170,8 +187,6 @@ html,body {
     white-space: nowrap;
     height: 28px;
     line-height: 28px;
-
-  
 }
 
 .audiocall h1{

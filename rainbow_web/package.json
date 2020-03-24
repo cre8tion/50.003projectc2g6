@@ -4,7 +4,7 @@
   "description": "rainbow web sdk",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "start": "./node_modules/http-server/bin/http-server -S -C cert.pem src/ -p 8887"
   },
   "author": "",
   "license": "ISC",

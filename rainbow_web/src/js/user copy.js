@@ -15,18 +15,15 @@ $(function() {
     // Stupid CORS
     // read this :https://stackoverflow.com/questions/43871637/no-access-control-allow-origin-header-is-present-on-the-requested-resource-whe
     const proxyurl = "https://cors-anywhere.herokuapp.com/";
-    const createGuestUrl = "https://sheltered-journey-07706.herokuapp.com/api/v1/guest_creation"; 
-    const routingEngineUrl = "https://sheltered-journey-07706.herokuapp.com/db/route";
-    const setAvailabilituUrl = "https://sheltered-journey-07706.herokuapp.com/db/agent/"
-
+    const url = "https://sheltered-journey-07706.herokuapp.com/api/v1/guest_creation"; 
 
     /* Callback for handling the event 'RAINBOW_ONREADY' */
     var onReady = function onReady() {
         console.log('login now ...');
         console.log("[DEMO] :: On SDK Ready !");
 
-        // Get guest account
-        fetch(proxyurl + createGuestUrl)
+        // Get a guest account through API
+        fetch(proxyurl + url)
         .then(response => response.text())
         .then(function(result) { 
             result = JSON.parse(result);
@@ -34,63 +31,17 @@ $(function() {
                 myRainbowLogin = result['data']['username'];
                 myRainbowPassword = result['data']['password'];
 
-                // Sign in to rainbow
+                myRainbowLogin = "agent1@sutd.com";
+                myRainbowPassword = "Agent1_sutd";
+
                 rainbowSDK.connection.signin(myRainbowLogin, myRainbowPassword)
                 .then(function(account) {
                     console.log(myRainbowLogin+" login in successfully!");
-
-                    addInitPrompt()
-
-                    // Promp customers to choose service and language upon successful login
-                    const selectionBox = document.getElementById('selection-box')
-                    selectionBox.addEventListener('submit', e=>{
-                        e.preventDefault()
-                        const selectedLanguage = document.getElementById('language')
-                        const selectedService = document.getElementById('service')
-                        const selectButton = document.getElementById('select-button')
-
-                        console.log(selectedLanguage);
-                        console.log(selectedService);
-                                            
-                        selectButton.disabled = true;
-                        selectedLanguage.disabled = true;
-                        selectedService.disabled = true;
-
-                        appendMessage('Looking for available agent ... ', 'agent');
-                                                
-                        fetch(proxyurl+routingEngineUrl+"/"+selectedLanguage.value+"+"+selectedService.value)
-                          .then(response => response.text())
-                          .then(function(result) {
-                            console.log('result is : '+result)
-                            result = JSON.parse(result);
-
-                            if (result['success']==true){
-                                if (result['data'].length == 0){
-                                    appendMessage(result['message'], 'agent')
-                                    selectButton.disabled = false;
-                                    selectedLanguage.disabled = false;
-                                    selectedService.disabled = false;
-                                }else{
-                                    console.log('agent is found')
-                                    agent_id = result['data']
-                                    console.log('agent id is '+agent_id)
-                                    appendMessage('Agent is found id: '+agent_id, 'agent')
-                                    setAgentAvailabiliy(agent_id, 1)
-                                    rainbowSDK.contacts.searchById(agent_id).then(function(contact) {
-                                        rainbowSDK.conversations.openConversationForContact(contact).then(function(conversation){
-                                            rainbowSDK.im.sendMessageToConversation(conversation, "Hi agent "+agent_id);
-                                            
-                                        })        
-                                    });            
-                                }
-                            }
-                          })
-                          .catch(error => console.log('error', error));
-                    })
                 })
                 .catch(function(err) {
                     console.log(myRainbowLogin + " login failed. " + err);
                 });
+
             }else{
                 alert('Fail to register guest account');
             }
@@ -99,8 +50,7 @@ $(function() {
             console.log('error', error);
             alert(error);
         });
-}
-
+    };
 
 
     /* Callback for handling the event 'RAINBOW_ONCONNECTIONSTATECHANGED' */
@@ -163,60 +113,20 @@ $(function() {
     messageForm.addEventListener('submit', e=>{
         e.preventDefault()
         const message = messageInput.value
-        if (message != ''){
-            rainbowSDK.im.sendMessageToConversation(conversation_global, message);
-            appendMessage(`${message}`, 'user')
-            messageInput.value=''       
-        }
+        rainbowSDK.im.sendMessageToConversation(conversation_global, message);
+        appendMessage(`${message}`, 'user')
+        messageInput.value=''
     })
-
-
-    function setAgentAvailabiliy(agent_id, availability){
-        var requestOptions = {
-            method: 'PUT',
-            redirect: 'follow'
-        };
-
-        fetch(proxyurl+ setAvailabilituUrl + agent_id + '/availability/' + availability, requestOptions)
-        .then(response => response.text())
-        .then(result => console.log(result+'\n set ' + agent_id + ' to availability ' + availability))
-        .catch(error => console.log('error', error));
-
-    }
-
-    function addInitPrompt(){
-        $('.message-container').append("<li tabindex=\"1\">\
-        <img class=\"agenthead\" src=\"./img/user_head.png\">\
-        <form class=\"agent\" id=\"selection-box\">\
-            Please Choose Language :\
-            <select id=\"language\">\
-                <option value=\"english\">English</option>\
-                <option value=\"chinese\">Chinese</option>\
-                <option value=\"malay\">Malay</option>\
-            </select>\
-            <br></br> \
-            Please Choose Service :\
-            <select id=\"service\">\
-                <option value=\"insurance\">Insurance</option>\
-                <option value=\"bank_statement\">Bank Statement</option>\
-                <option value=\"fraud\">Fraud</option>\
-            </select>\
-            <br></br> \
-            <button type=\"submit\" id=\"select-button\">Select</button>\
-        </form>\
-        </li>");
-    }
-
 
     // Add HTML tags
     // sender: 'user' or 'agent'
     function appendMessage(message, sender){
         if (sender == 'agent'){
             console.log('sender is agent');
-            $('.message-container').append('<li tabindex="1"><img class="agenthead" src="./img/user_head.png"><span class="agent">'+message+'</span><br></br></li>');
+            $('.message-container').append('<li tabindex="1"><img class="agenthead" src="./img/user_head.png"><span class="agent">'+message+'</span></li><br></br>');
         }else if (sender == 'user'){
             console.log('sender is user' );
-            $('.message-container').append('<li tabindex="1"><img class="userhead" src="./img/user_head.png"><span class="user">'+message+'</span><br></br></li>');
+            $('.message-container').append('<li tabindex="1"><img class="userhead" src="./img/user_head.png"><span class="user">'+message+'</span></li><br></br>');
         }
         $('.menu .message-container').scrollTop(1000000000000);
     }
