@@ -19,10 +19,17 @@ $(function() {
     const routingEngineUrl = "https://sheltered-journey-07706.herokuapp.com/db/route";
     const setAvailabilituUrl = "https://sheltered-journey-07706.herokuapp.com/db/agent/"
 
+    const selectedLanguage = document.getElementById('language')
+    const selectedService = document.getElementById('service')
+    const selectButton = document.getElementById('call-button')
+    const cancelButton = document.getElementById('cancel-button')
+    const selectionBox = document.getElementById('selection-box')
+
+    // Disable all buttons before guest login
+    banButtons(true)
 
     /* Callback for handling the event 'RAINBOW_ONREADY' */
     var onReady = function onReady() {
-        console.log('login now ...');
         console.log("[DEMO] :: On SDK Ready !");
 
         // Get guest account
@@ -38,26 +45,14 @@ $(function() {
                 rainbowSDK.connection.signin(myRainbowLogin, myRainbowPassword)
                 .then(function(account) {
                     console.log(myRainbowLogin+" login in successfully!");
-
-                    addInitPrompt()
+                    banButtons(false)
 
                     // Promp customers to choose service and language upon successful login
-                    const selectionBox = document.getElementById('selection-box')
-                    selectionBox.addEventListener('submit', e=>{
-                        e.preventDefault()
-                        const selectedLanguage = document.getElementById('language')
-                        const selectedService = document.getElementById('service')
-                        const selectButton = document.getElementById('select-button')
+                    selectButton.addEventListener("click", function(){
+                        console.log(selectedLanguage.value + ' and ' + selectedService.value);
 
-                        console.log(selectedLanguage);
-                        console.log(selectedService);
-                                            
-                        selectButton.disabled = true;
-                        selectedLanguage.disabled = true;
-                        selectedService.disabled = true;
-
-                        appendMessage('Looking for available agent ... ', 'agent');
-                                                
+                        banButtons(true)
+        
                         fetch(proxyurl+routingEngineUrl+"/"+selectedLanguage.value+"+"+selectedService.value)
                           .then(response => response.text())
                           .then(function(result) {
@@ -65,21 +60,28 @@ $(function() {
                             result = JSON.parse(result);
 
                             if (result['success']==true){
-                                if (result['data'].length == 0){
-                                    appendMessage(result['message'], 'agent')
-                                    selectButton.disabled = false;
-                                    selectedLanguage.disabled = false;
-                                    selectedService.disabled = false;
+                                if (result['data'].hasOwnProperty('selectedAgent')){
+                                    alert('No available agent !');
+                                    banButtons(false)
                                 }else{
                                     console.log('agent is found')
-                                    agent_id = result['data']
+                                    agent_id = result['data']['selectedAgent']
+                                    // agent_id = "5e532bccb4528b74a00c92f9";
                                     console.log('agent id is '+agent_id)
-                                    appendMessage('Agent is found id: '+agent_id, 'agent')
-                                    setAgentAvailabiliy(agent_id, 1)
+                                    // setAgentAvailabiliy(agent_id, 1)
                                     rainbowSDK.contacts.searchById(agent_id).then(function(contact) {
+                                        
+                                        var res = rainbowSDK.webRTC.callInAudio(contact);
+                                        if(res.label === "OK") {
+                                            console.log('call is inited, waiting for agent to answer');
+                                        }
+                                        cancelButton.addEventListener("click", function(){
+                                            rainbowSDK.webRTC.release(res)
+                                            console.log('cancel clicked')
+                                            alert('Call released');
+                                        })
                                         rainbowSDK.conversations.openConversationForContact(contact).then(function(conversation){
                                             rainbowSDK.im.sendMessageToConversation(conversation, "Hi agent "+agent_id);
-                                            
                                         })        
                                     });            
                                 }
@@ -99,9 +101,14 @@ $(function() {
             console.log('error', error);
             alert(error);
         });
-}
+    }
 
 
+    function banButtons(yesNo){
+        selectButton.disabled = yesNo;
+        selectedLanguage.disabled = yesNo;
+        selectedService.disabled = yesNo;
+    }
 
     /* Callback for handling the event 'RAINBOW_ONCONNECTIONSTATECHANGED' */
     var onLoaded = function onLoaded() {
@@ -129,47 +136,6 @@ $(function() {
             }
     };
 
-    var conversation_global;
-
-    // Im handler
-    let onNewMessageReceived = function(event) {
-
-        // as noted in the documentation, RAINBOW_ONNEWIMMESSAGERECEIVED carries three parameters: Message, Conversation and CC. Let's retrieve them:
-
-        let message = event.detail.message;
-        let conversation = event.detail.conversation;   // refer to api "conversation"-web-sdk
-
-        conversation_global = conversation;
-
-        let conversation_id = conversation.id;
-        let contact = conversation.contact;
-
-        console.log('conversation id is :' + conversation_id);
-        console.log('contact id is : '+contact.id)
-        console.log('msg id is : ' + message.id);
-        console.log('msg is from : '+ message.from.id);
-
-        appendMessage(`${message.data}`, 'agent');
-        console.log('New message >>>>>>>>>>>>>>>>>>: '+ message.data);
-    }
-
-    // add event listener
-    document.addEventListener(rainbowSDK.im.RAINBOW_ONNEWIMMESSAGERECEIVED, onNewMessageReceived)
-
-
-    const messageContainer = document.getElementById('message-container')
-    const messageForm = document.getElementById('send-container')
-    const messageInput = document.getElementById('message-input')
-    messageForm.addEventListener('submit', e=>{
-        e.preventDefault()
-        const message = messageInput.value
-        if (message != ''){
-            rainbowSDK.im.sendMessageToConversation(conversation_global, message);
-            appendMessage(`${message}`, 'user')
-            messageInput.value=''       
-        }
-    })
-
 
     function setAgentAvailabiliy(agent_id, availability){
         var requestOptions = {
@@ -183,45 +149,6 @@ $(function() {
         .catch(error => console.log('error', error));
 
     }
-
-    function addInitPrompt(){
-        $('.message-container').append("<li tabindex=\"1\">\
-        <img class=\"agenthead\" src=\"./img/user_head.png\">\
-        <form class=\"agent\" id=\"selection-box\">\
-            Please Choose Language :\
-            <select id=\"language\">\
-                <option value=\"english\">English</option>\
-                <option value=\"chinese\">Chinese</option>\
-                <option value=\"malay\">Malay</option>\
-            </select>\
-            <br></br> \
-            Please Choose Service :\
-            <select id=\"service\">\
-                <option value=\"insurance\">Insurance</option>\
-                <option value=\"bank_statement\">Bank Statement</option>\
-                <option value=\"fraud\">Fraud</option>\
-            </select>\
-            <br></br> \
-            <button type=\"submit\" id=\"select-button\">Select</button>\
-        </form>\
-        </li>");
-    }
-
-
-    // Add HTML tags
-    // sender: 'user' or 'agent'
-    function appendMessage(message, sender){
-        if (sender == 'agent'){
-            console.log('sender is agent');
-            $('.message-container').append('<li tabindex="1"><img class="agenthead" src="./img/user_head.png"><span class="agent">'+message+'</span><br></br></li>');
-        }else if (sender == 'user'){
-            console.log('sender is user' );
-            $('.message-container').append('<li tabindex="1"><img class="userhead" src="./img/user_head.png"><span class="user">'+message+'</span><br></br></li>');
-        }
-        $('.menu .message-container').scrollTop(1000000000000);
-    }
-
-
 
 
     var onWebRTCCallChanged = function onWebRTCCallChanged(event) {

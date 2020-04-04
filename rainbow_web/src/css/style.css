@@ -7,6 +7,17 @@ html,body {
 }
 
 
+.callBox {
+    text-align:center;
+    margin:0 auto;
+    margin-bottom:10px;
+    padding:10px;
+    background: white;
+    height:250px;
+    width:400px;
+    border: 2px solid black;
+    border-radius: 50px;
+}
 
 /* #minivideo {
     width: 500px;
@@ -263,7 +274,8 @@ a {
     width:800px;
     border:0px solid #000000;
     overflow-y: auto;
-    overflow-x: hidden; }
+    overflow-x: hidden; 
+}
   
 #message-input {
     margin-left: 100px;
