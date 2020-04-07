@@ -19,8 +19,11 @@ $(function () {
     const routingEngineUrl = "https://sheltered-journey-07706.herokuapp.com/db/route";
     const setAvailabilituUrl = "https://sheltered-journey-07706.herokuapp.com/db/agent/"
 
-    const language = document.getElementById('toggle').value;
+    const toggleButton = document.getElementById('toggle');
+    toggleButton.disabled = true;
 
+    const language = toggleButton.value;
+    
     const callButton = document.getElementById('call-button');
     const cancelButton = document.getElementById('cancel-button');
     const logMsg = document.getElementById('logMsg');
@@ -63,6 +66,7 @@ $(function () {
                                 console.log('routing url is '+requestUrl);
 
                                 callButton.addEventListener('click', function () {
+                                    callButton.disabled = true;
                                     fetch(requestUrl)
                                         .then(response => response.text())
                                         .then(function (result) {
@@ -72,8 +76,7 @@ $(function () {
                                             if (result['success'] == true) {
                                                 var status = result['data']['status'];
                                                 if (status == 0) {
-                                                    foound = true;
-                                                    callButton.disabled = true;
+                                                    foound = true;                                                   
                                                     alert('No desired agent online, please try again later');
                                                 } else if (status == 1) {
                                                     foound = true;
@@ -86,12 +89,10 @@ $(function () {
                                                         var res = rainbowSDK.webRTC.callInAudio(contact);
                                                         if (res.label === "OK") {
                                                             logMsg.innerHTML = 'Call is successfully initiated';
-                                                            callButton.disabled = true;
                                                             cancelButton.disabled = false;
                                                         }
                                                     });
                                                 }else if(status ==2){
-                                                    callButton.disabled = true;
                                                     logMsg.innerHTML = 'Agents are busy, you are added to queue, please wait.'
                                                 }
                                             }
@@ -148,15 +149,16 @@ $(function () {
     // cancel button event listener
     cancelButton.onclick = async function () {
         if (confirm('Are you sure to exit?')) {
+            var language_code = getLanguageCode();
 
-            if(agent_id_global != null){
+            if(agent_id_global == null){
+                window.location = '../'+language_code+'/faq.html';
+            }else{
                 setAgentAvailabiliy(agent_id_global,1)
                 console.log(agent_id_global+' to 1')
                 await sleep(1000)
+                window.location = '../'+language_code+'/feedback.html?id='+agent_id_global;
             }
-
-            var language_code = getLanguageCode();
-            window.location = '../'+language_code+'/feedback.html';
         }
     }
 

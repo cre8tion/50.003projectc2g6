@@ -7,7 +7,9 @@ $(function () {
         applicationSecret = "233R0q88Qs6qxERc8gBXLEEJK4nWky0Xur7A0J2I9K2S77n3gb3aZrKtLK97D26l";
 
     var myRainbowLogin, myRainbowPassword;
-    const language = document.getElementById('toggle').value;
+    const toggleButton = document.getElementById('toggle');
+    toggleButton.disabled = true;
+    const language = toggleButton.value;
 
     /* Bootstrap the SDK */
     angular.bootstrap(document, ["sdk"]).get("rainbowSDK");
@@ -170,15 +172,16 @@ $(function () {
     const exitButton = document.getElementById('exit')
     exitButton.onclick = async function () {
         if (confirm('Are you sure to exit?')) {
-            if(agent_id_global != null){
+            var language_code = getLanguageCode();
+
+            if(agent_id_global == null){
+                window.location = '../'+language_code+'/faq.html';
+            }else{
                 setAgentAvailabiliy(agent_id_global,1)
                 console.log(agent_id_global+' to 1')
                 await sleep(1000)
-            }
-            
-            var language_code = getLanguageCode();
-            window.location = '../'+language_code+'/feedback.html';
-           
+                window.location = '../'+language_code+'/feedback.html?id='+agent_id_global;
+            }           
         }
     }
 
@@ -213,7 +216,7 @@ $(function () {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    //
+    // Return language code of current page
     function getLanguageCode(){
         var code;
         if (language == 'english'){
