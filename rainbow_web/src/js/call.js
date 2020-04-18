@@ -23,6 +23,7 @@ $(function () {
     toggleButton.disabled = true;
 
     const language = toggleButton.value;
+    const language_code = getLanguageCode();
     
     const callButton = document.getElementById('call-button');
     const cancelButton = document.getElementById('cancel-button');
@@ -47,7 +48,7 @@ $(function () {
 
                     // Sign in to rainbow
                     rainbowSDK.connection.signin(myRainbowLogin, myRainbowPassword)
-                        .then(async function (account) {
+                        .then(function (account) {
                             console.log(myRainbowLogin + " login in successfully!");
                             var skill = UrlParm.parm('skill');
                             console.log('selected skill is '+skill);
@@ -55,53 +56,59 @@ $(function () {
                             callButton.disabled = false;
                             logMsg.innerHTML = "Please click call";
 
-                            var foound = false;
-                            while (!foound) {
-                                var requestUrl;
-                                if (skill == 'general') {
-                                    requestUrl = proxyurl + routingEngineUrl + "/" + language;
-                                } else {
-                                    requestUrl = proxyurl + routingEngineUrl + "/" + language + '+' + skill;
-                                }
-                                console.log('routing url is '+requestUrl);
-
-                                callButton.addEventListener('click', function () {
-                                    callButton.disabled = true;
-                                    fetch(requestUrl)
-                                        .then(response => response.text())
-                                        .then(function (result) {
-                                            console.log('result is : ' + result)
-                                            result = JSON.parse(result);
-
-                                            if (result['success'] == true) {
-                                                var status = result['data']['status'];
-                                                if (status == 0) {
-                                                    foound = true;                                                   
-                                                    alert('No desired agent online, please try again later');
-                                                } else if (status == 1) {
-                                                    foound = true;
-                                                    agent_id = result['data']['selectedAgent'];
-                                                    agent_id_global = agent_id;
-                                                    setAgentAvailabiliy(agent_id, 2)
-                                                    console.log('agent found, id is ' + agent_id)
-                                                    rainbowSDK.contacts.searchById(agent_id).then(function (contact) {
-
-                                                        var res = rainbowSDK.webRTC.callInAudio(contact);
-                                                        if (res.label === "OK") {
-                                                            logMsg.innerHTML = 'Call is successfully initiated';
-                                                            cancelButton.disabled = false;
-                                                        }
-                                                    });
-                                                }else if(status ==2){
-                                                    logMsg.innerHTML = 'Agents are busy, you are added to queue, please wait.'
-                                                }
-                                            }
-                                        })
-                                        .catch(error => console.log('error', error));
-                                })
-                                await sleep(10000)
-                                console.log('wait 10s');
+                            
+                            var requestUrl;
+                            if (skill == 'general') {
+                                requestUrl = proxyurl + routingEngineUrl + "/" + language;
+                            } else {
+                                requestUrl = proxyurl + routingEngineUrl + "/" + language + '+' + skill;
                             }
+                            console.log('routing url is '+requestUrl);
+
+                            callButton.addEventListener('click', async function () {
+                                var found = false;
+                                callButton.disabled = true;
+
+                                while(!found){
+                                    fetch(requestUrl)
+                                    .then(response => response.text())
+                                    .then(function (result) {
+                                        console.log('result is : ' + result)
+                                        result = JSON.parse(result);
+
+                                        if (result['success'] == true) {
+                                            var status = result['data']['status'];
+                                            if (status == 0) {
+                                                found = true;                                                   
+                                                alert('No desired agent online, please try again later');
+                                                window.location = '../'+language_code+'/faq.html';
+                                            } else if (status == 1) {
+                                                found = true;
+                                                agent_id = result['data']['selectedAgent'];
+                                                agent_id_global = agent_id;
+                                                setAgentAvailabiliy(agent_id, 2)
+                                                console.log('agent found, id is ' + agent_id)
+                                                rainbowSDK.contacts.searchById(agent_id).then(function (contact) {
+
+                                                    var res = rainbowSDK.webRTC.callInAudio(contact);
+                                                    if (res.label === "OK") {
+                                                        logMsg.innerHTML = 'Call is successfully initiated';
+                                                        cancelButton.disabled = false;
+                                                    }
+                                                });
+                                            }else if(status ==2){
+                                                logMsg.innerHTML = 'Agents are busy, you are added to queue, please wait.'
+                                            }
+                                        }
+                                    })
+                                    .catch(error => console.log('error', error));
+                           
+                                    await sleep(10000)
+                                    console.log('wait 10s');
+                                }
+
+                            })
+                            
 
                             // Look for available agent
 

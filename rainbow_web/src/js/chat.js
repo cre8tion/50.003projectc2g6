@@ -10,7 +10,7 @@ $(function () {
     const toggleButton = document.getElementById('toggle');
     toggleButton.disabled = true;
     const language = toggleButton.value;
-
+    var language_code = getLanguageCode();
     /* Bootstrap the SDK */
     angular.bootstrap(document, ["sdk"]).get("rainbowSDK");
 
@@ -26,7 +26,7 @@ $(function () {
     /* Callback for handling the event 'RAINBOW_ONREADY' */
     var onReady = function onReady() {
         console.log("[DEMO] :: On SDK Ready ! Login now");
-
+        appendMessage('Connecting to server, please wait.', 'agent');
         // Get guest account
         fetch(proxyurl + createGuestUrl)
             .then(response => response.text())
@@ -68,6 +68,7 @@ $(function () {
                                             if (status == 0) {
                                                 appendMessage('No desired agent online, please try again later', 'agent')
                                                 found = true;
+                                                window.location = '../'+language_code+'/faq.html';
                                             }else if (status == 1){
                                                 found = true;
                                                 agent_id = result['data']['selectedAgent']
