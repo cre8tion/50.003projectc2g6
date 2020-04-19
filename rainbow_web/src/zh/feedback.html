@@ -1,53 +1,88 @@
 <!DOCTYPE html>
-<html lang="en">
-<meta http-equiv="Content-Type" content="text/html">
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link href="../css/style.css" rel="stylesheet" type="text/css">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 <head>
-    <title>Feedback</title>
+  <html lang="en">
+  <meta http-equiv="Content-Type" content="text/html">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <title>BOS Feedback</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <script src="../js/feedback.js"></script>
 </head>
 
 <body>
-    <div class="topnav">
-        <a href="index.html">主页</a>
-        <a href="aboutus.html">关于我们</a>
-        <a href="support.html">联系客服</a>
-        <a href="faq.html">FAQ</a>
-        <div class="dropdown">
-            <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">中文
-                <span class="caret"></span></button>
-            <ul class="dropdown-menu">
-                <li><a href="../en/feedback.html">英语(English)</a></li>
-                <li><a href="../ms/feedback.html">马来语(Malay)</a></li>
-            </ul>
-        </div>
+
+  <div class="topnav">
+    <a href="index.html">Home</a>
+    <a href="aboutus.html">About Us</a>
+    <a href="support.html">Support</a>
+    <a href="faq.html">FAQ</a>
+    <div class="dropdown">
+      <button class="btn btn-default dropdown-toggle" type="button" value='english' id='toggle' data-toggle="dropdown">English
+        <span class="caret"></span></button>
+      <ul class="dropdown-menu">
+        <li><a href="../zh/feedback.html">Chinese (中文)</a></li>
+        <li><a href="../ms/feedback.html">Malay</a></li>
+      </ul>
     </div>
 
-    <img src="../img/aboutus.jpg">
+  </div>
 
-    <div class="aboutus">
-        <h1 style="text-align:center">反馈</h1>
-        <br>
+
+  <div style="background-image: url('../img/feedback.jpg');">
+    <br><br><br>
+    <div class=feedback>
+      <h1>Your Feedback Matters</h1>
+      <br>
+      <p>
+        To help us to better serve our customers, please tell us how was your overall experience with our support below.
+        Do share your experience with us.
+
+        <br><br>
+
+        Rating:
+        <span class="starRating">
+          <input id="rating5" type="radio" name="rating" value="5">
+          <label for="rating5">5</label>
+          <input id="rating4" type="radio" name="rating" value="4">
+          <label for="rating4">4</label>
+          <input id="rating3" type="radio" name="rating" value="3" checked>
+          <label for="rating3">3</label>
+          <input id="rating2" type="radio" name="rating" value="2">
+          <label for="rating2">2</label>
+          <input id="rating1" type="radio" name="rating" value="1">
+          <label for="rating1">1</label>
+        </span>
+
+      </p>
+
+      <button class="submitfeedback" id="submit" type="submit">Submit</button>
     </div>
 
-    <div class="footer" style="margin-top: 0px">
-        <h1>总部</h1>
-        <p>
-            电话 &#9990; &nbsp; 7777 7777
-            &nbsp;&nbsp;&nbsp;
-            传真 &#9990; &nbsp; 8888 8888
-            &nbsp;&nbsp;&nbsp;
-            索玛法大道 (Somapah Rd), SUTD
-            <br><br><br>
-            新科银行 &nbsp;&copy;&nbsp;2020
-        </p>
-    </div>
+    <br><br><br><br>
+
+
+
+  </div>
+
+  <div class="footer" style="margin-top: 0px">
+    <h1>Head Office</h1>
+    <p>
+      Phone &#9990; &nbsp; 7777 7777
+      &nbsp;&nbsp;&nbsp;
+      Fax &#9990; &nbsp; 8888 8888
+      &nbsp;&nbsp;&nbsp;
+      Somapah Rd, SUTD
+      <br><br><br>
+      Bank of SUTD &nbsp;&copy;&nbsp;2020
+    </p>
+  </div>
+
 
 </body>
 

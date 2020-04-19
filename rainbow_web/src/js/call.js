@@ -155,18 +155,18 @@ $(function () {
 
     // cancel button event listener
     cancelButton.onclick = async function () {
-        if (confirm('Are you sure to exit?')) {
-            var language_code = getLanguageCode();
 
-            if(agent_id_global == null){
-                window.location = '../'+language_code+'/faq.html';
-            }else{
-                setAgentAvailabiliy(agent_id_global,1)
-                console.log(agent_id_global+' to 1')
-                await sleep(1000)
-                window.location = '../'+language_code+'/feedback.html?id='+agent_id_global;
-            }
+        var language_code = getLanguageCode();
+
+        if(agent_id_global == null){
+            window.location = '../'+language_code+'/faq.html';
+        }else{
+            setAgentAvailabiliy(agent_id_global,1)
+            console.log(agent_id_global+' to 1')
+            await sleep(1000)
+            window.location = '../'+language_code+'/feedback.html?id='+agent_id_global;
         }
+        
     }
 
     // Sleep function
