@@ -1,7 +1,7 @@
 version: 2
 updates:
   - package-ecosystem: "npm"
-    directory: "/rainbow-web"
+    directory: "/rainbow_web"
     schedule:
       interval: "daily"
     ignore:
