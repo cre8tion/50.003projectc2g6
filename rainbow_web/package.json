@@ -19,6 +19,6 @@
     "http-server": "^0.13.0",
     "jest": "^29.4.3",
     "selenium-webdriver": "^4.8.2",
-    "vue-i18n": "^8.16.0"
+    "vue-i18n": "^8.28.2"
   }
 }
